@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from flask import Flask
+import flask
 
-app = Flask(__name__)
+app = flask.Flask(__name__)
 
 @app.route('/')
 def root():
@@ -12,7 +12,7 @@ def root():
 
 @app.route('/<path:resource>')
 def static_resource(resource):
-    return send_from_directory('static', resource)
+    return flask.send_from_directory('static', resource)
 
 @app.route('/hello')
 def hello():
