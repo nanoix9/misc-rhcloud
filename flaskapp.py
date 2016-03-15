@@ -18,6 +18,10 @@ def hello():
 def lib(resource):
     return flask.send_from_directory('lib', resource)
 
+@app.route('/test/<path:path>')
+def lib(path):
+    return 'Test: ' + path
+
 #@app.route('/<path:resource>')
 #def static_resource(resource):
 #    return flask.send_from_directory('static', resource)
