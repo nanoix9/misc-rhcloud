@@ -19,7 +19,7 @@ def lib(resource):
     return flask.send_from_directory('lib', resource)
 
 @app.route('/test/<path:path>')
-def lib(path):
+def test(path):
     return 'Test: ' + path
 
 #@app.route('/<path:resource>')
