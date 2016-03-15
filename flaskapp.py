@@ -14,9 +14,9 @@ def root():
 def hello():
     return '<h1>Hello World!</h1>'
 
-@app.route('/lib/<path:resource>')
-def lib(resource):
-    return flask.send_from_directory('lib', resource)
+#@app.route('/lib/<path:resource>')
+#def lib(resource):
+#    return flask.send_from_directory('lib', resource)
 
 @app.route('/test/<path:path>')
 def test(path):
