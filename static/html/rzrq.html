@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+
+        <title>RZRQ</title>
+        <meta name="description" content="The HTML5 Herald">
+        <meta name="author" content="@nanoix9">
+
+        <link href="/lib/css/c3.min.css" rel="stylesheet" type="text/css">
+
+        <!-- Load jquery, d3.js and c3.js -->
+        <script src="/lib/js/jquery-2.2.1.js" charset="utf-8"></script>
+        <script src="/lib/js/d3.min.js" charset="utf-8"></script>
+        <script src="/lib/js/c3.min.js"></script>
+
+    </head>
+
+    <body>
+        <div id="chart"></div>
+        <script>
+            var url = 'http://app.jrj.com.cn/appdata/data.php?cid=147&vname=sec_alldata&havingType=2&page=1&psize=50'
+            var sec_alldata = null
+            $.getScript(url, function() {
+                //console.debug(sec_alldata)
+                var chart = c3.generate({
+                    bindto: '#chart',
+                    data: {
+                        columns: [
+                            ['data1', 30, 200, 100, 400, 150, 250],
+                            ['data2', 50, 20, 10, 40, 15, 25]
+                        ]
+                    }
+                })
+            });
+        </script>
+    </body>
+</html>
