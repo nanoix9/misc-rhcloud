@@ -14,6 +14,12 @@ def root():
 def hello():
     return '<h1>Hello World!</h1>'
 
+@app.route('/rzrq')
+def rzrq():
+    return flask.redirect('/static/html/rzrq.html')
+
+##################
+
 #@app.route('/lib/<path:resource>')
 #def lib(resource):
 #    return flask.send_from_directory('lib', resource)
@@ -27,6 +33,8 @@ def test(path):
 #    return flask.send_from_directory('static', resource)
 
 def main():
+    with app.test_request_context():
+        print flask.url_for('rzrq')
     app.run()
 
 if __name__ == '__main__':
