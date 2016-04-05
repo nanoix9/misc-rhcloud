@@ -14,6 +14,8 @@
         <script src="/static/js/jquery-2.2.1.js" charset="utf-8"></script>
         <script src="/static/js/d3.min.js" charset="utf-8"></script>
         <script src="/static/js/c3.min.js"></script>
+        <script src="/static/js/linq.min.js"></script>
+        <script src="/static/js/math.min.js"></script>
 
     </head>
 
@@ -21,8 +23,8 @@
         <div id="chart"></div>
         <script>
             function get_col(obj, colname, name_first) {
-                icol = obj.column[colname];
-                vec = obj.data.map(function (x) { return x[icol]; })
+                var icol = obj.Column[colname];
+                var vec = obj.Data.map(function (x) { return x[icol]; })
                 if (typeof name_first == 'string') {
                     vec.unshift(name_first);
                 } else if (name_first) {
@@ -31,21 +33,83 @@
                 return vec;
             }
 
-            var url = 'http://app.jrj.com.cn/appdata/data.php?cid=147&vname=statList&havingType=2&page=1&psize=150'
+            function get_subdata(obj, start_date, end_date) {
+                var sub = {};
+                var idate = obj.Column['TRADEDATE'];
+                sub.Column = obj.Column;
+                sub.Data = obj.Data.filter(function (r) {
+                    var d = new Date(r[idate]);
+                    return d >= start_date && d <= end_date;
+                });
+                //console.debug(sub);
+                return sub;
+            }
+            // 'SEC_TRADE'
+
+            function group_data(obj, start_date, end_date) {
+                var idate = obj.Column['TRADEDATE'];
+                var isec = obj.Column['SEC_TRADE'];
+                var _my_add = function(x, y) {
+                    if (!x) {
+                        return y;
+                    }
+                    var ret = [];
+                    for (var i=0; i<x.length; i++) {
+                        if (!x[i]) {
+                            continue;
+                        } else if (i == idate) {
+                            ret[i] = x[i];
+                        } else {
+                            ret[i] = x[i] + y[i];
+                        }
+                    }
+                    return ret;
+                }
+
+                var ret = {};
+                ret.Column = obj.Column;
+                var linq = Enumerable.From(obj.Data); //.slice(1,10));
+                ret.Data = linq.Where(function (x) {
+                            var d = new Date(x[idate]);
+                            return d >= start_date && d <= end_date;
+                        })
+                        .GroupBy(function(x) {return x[idate];})
+                        .Select(function(x) {
+                            return x.Aggregate(null, function(x, y) {
+                                console.debug('x:', x);
+                                console.debug('y:', y);
+                                return _my_add(x, y);
+                            })
+                        })
+                        .ToArray();
+                console.debug(ret);
+                return ret;
+            }
+
+
+            //var url = 'http://app.jrj.com.cn/appdata/data.php?cid=147&vname=statList&havingType=2&page=1&psize=150'
+            var url = 'http://stock.jrj.com.cn/stocktrade/js/margintradestatdata.js'
             var statList = null
+            var days_ago = 180;
+            var end_date = new Date();
+            var start_date = new Date(end_date.getTime() - days_ago * 24 * 3600 * 1000);
             $.getScript(url, function() {
-                var buy = get_col(statList, 'BUY_BALANCE', true);
+                var data_merged = group_data(statList, start_date, end_date);
+                //var data_to_plot = get_subdata(data_merged, start_date, end_date);
+                var data_to_plot = data_merged;
+                //console.debug(data_to_plot);
+                var buy = get_col(data_to_plot, 'BUY_BALANCE', true);
                 var datecol = 'Date'
-                //console.debug(statList)
+                //console.debug(data_to_plot)
                 //console.debug(buy)
                 var chart = c3.generate({
                     bindto: '#chart',
                     data: {
                         x: datecol,
                         columns: [
-                            get_col(statList, 'TRADEDATE', datecol),
+                            get_col(data_to_plot, 'TRADEDATE', datecol),
                             buy,
-                            get_col(statList, 'SELL_BALANCE', true),
+                            get_col(data_to_plot, 'SELL_BALANCE', true),
                             //['data2', 50, 20, 10, 40, 15, 25]
                         ],
                         axes: {
