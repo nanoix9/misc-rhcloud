@@ -31,21 +31,21 @@
                 return vec;
             }
 
-            var url = 'http://app.jrj.com.cn/appdata/data.php?cid=147&vname=sec_alldata&havingType=2&page=1&psize=150'
-            var sec_alldata = null
+            var url = 'http://app.jrj.com.cn/appdata/data.php?cid=147&vname=statList&havingType=2&page=1&psize=150'
+            var statList = null
             $.getScript(url, function() {
-                var buy = get_col(sec_alldata, 'BUY_BALANCE', true);
+                var buy = get_col(statList, 'BUY_BALANCE', true);
                 var datecol = 'Date'
-                //console.debug(sec_alldata)
+                //console.debug(statList)
                 //console.debug(buy)
                 var chart = c3.generate({
                     bindto: '#chart',
                     data: {
                         x: datecol,
                         columns: [
-                            get_col(sec_alldata, 'TRADEDATE', datecol),
+                            get_col(statList, 'TRADEDATE', datecol),
                             buy,
-                            get_col(sec_alldata, 'SELL_BALANCE', true),
+                            get_col(statList, 'SELL_BALANCE', true),
                             //['data2', 50, 20, 10, 40, 15, 25]
                         ],
                         axes: {
