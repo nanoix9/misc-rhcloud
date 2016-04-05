@@ -76,13 +76,13 @@
                         .GroupBy(function(x) {return x[idate];})
                         .Select(function(x) {
                             return x.Aggregate(null, function(x, y) {
-                                console.debug('x:', x);
-                                console.debug('y:', y);
+                                //console.debug('x:', x);
+                                //console.debug('y:', y);
                                 return _my_add(x, y);
                             })
                         })
                         .ToArray();
-                console.debug(ret);
+                //console.debug(ret);
                 return ret;
             }
 
